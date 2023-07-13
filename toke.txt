@@ -1,0 +1,3 @@
+MTEyODgyMTYyNjA4NDAxMjIxMw.GJKD3x.1BC3Uwm0I-1LkNuEC5jiCTAq8G70lfKBj97O3g
+
+url https://discord.com/oauth2/authorize?client_id=1128821626084012213&permissions=154619341888&scope=bot
