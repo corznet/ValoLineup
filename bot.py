@@ -1,14 +1,19 @@
 import discord
 import responses
-from discord.ext import commands
+from discord.ext.commands import Bot
 intents = discord.Intents.default()
 intents.typing = False
 intents.message_content = True
 
-client = discord.Client(command_prefix='!', intents=intents)
+bot = Bot(command_prefix='!', intents=intents)
 
-@client.command()
-async def send_bind(ctx):
+@bot.command()
+async def test(ctx, arg):
+    await ctx.send(arg)
+
+
+@bot.command()
+async def lineups(ctx):
     # Send an image
     with open('BINDMAP.png', 'rb') as image:
         await ctx.send(file=discord.File(image))
@@ -21,30 +26,7 @@ async def send_bind(ctx):
     await sent_message.add_reaction('🅱️')
 
 
-@client.event
-async def on_raw_reaction_add(payload):
-    # Check if the reaction is added by someone other than the bot
-    if not payload.member.client:
-        channel = await client.fetch_channel(payload.channel_id)
-        message = await channel.fetch_message(payload.message_id)
 
-        # Check if the bot sent the message and it contains an image
-        if message.author == client.user and message.attachments:
-            image_attachment = message.attachments[0]
-
-            # Check which reaction was added
-            if payload.emoji.name == '🅰️':
-                await send_another_image(channel, 'ASITEBIND.png')
-                await sent_message.add_reaction('1️⃣')
-            elif payload.emoji.name == '🅱️':
-                sent_message = await send_another_image(channel, 'BSITEBIND.png')
-                await sent_message.add_reaction('1️⃣')
-                await sent_message.add_reaction('2️⃣')
-
-async def send_another_image(channel, image_path):
-    # Send another image based on the selected reaction
-    with open(image_path, 'rb') as image:
-        await channel.send(file=discord.File(image))
 
 async def send_message(message, user_message, is_private):
     try:
@@ -56,26 +38,70 @@ async def send_message(message, user_message, is_private):
     
 def run_discord_bot():
     TOKEN = 'MTEyODgyMTYyNjA4NDAxMjIxMw.GJKD3x.1BC3Uwm0I-1LkNuEC5jiCTAq8G70lfKBj97O3g'
-    client = discord.Client(command_prefix='!', intents=intents)
+    bot = Bot(command_prefix='!', intents=intents)
 
-    @client.event
+    @bot.event
     async def on_ready():
-        print(f'{client.user} is now running')
+        print(f'{bot.user} is now running')
     
-    @client.event
-    async def on_message(message):
-        if message.author == client.user:
-            return
-        username = str(message.author)
-        user_message=str(message.content)
-        channel = str(message.channel)
-        print(f'{username} said : "{user_message}" ({channel})')
-        if user_message[0] == '?':
-           user_message = user_message[1:]
-           await send_message(message, user_message, is_private=True)
-        else: await send_message(message,user_message, is_private=False)
+    #@bot.event
+    #async def on_message(message):
+      #  if message.author == bot.user:
+       #     return
+       # username = str(message.author)
+       # user_message=str(message.content)
+       # channel = str(message.channel)
+       # print(f'{username} said : "{user_message}" ({channel})')
+       # if user_message[0] == '?':
+       #    user_message = user_message[1:]
+       #    await send_message(message, user_message, is_private=True)
+        #else: await send_message(message,user_message, is_private=False)
+    @bot.command()
+    async def lineups(ctx):
+    # Send an image
+        await ctx.send("https://i.imgur.com/UH9nylK.png")
+
+    # Send an image and store the message object
+        sent_message = await ctx.send('Which bomb sites line ups are you looking for? React with 🅰️ or 🅱️')
+
+    # Add reactions to the sent message
+        await sent_message.add_reaction('🅰️')
+        await sent_message.add_reaction('🅱️')
+        
+
+
+    @bot.listen()
+    async def on_raw_reaction_add(payload):
+        
+    # Check if the reaction is added by someone other than the bot
+        channel = await bot.fetch_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        
+        if payload.user_id != bot.user.id:
+            if payload.emoji.name == '🅰️':
+                sent_message = await channel.send("https://i.imgur.com/fCQhciZ.png")
+                await channel.send("You selected A Site.")
+                await sent_message.add_reaction('1\u20E3')
+                await sent_message.add_reaction('2\u20E3')
+            elif payload.emoji.name == '🅱️':
+                sent_message = await channel.send("https://i.imgur.com/WZsWmbF.png")
+                await channel.send("You selected B Site.")
+                await sent_message.add_reaction('1\u20E3')
+        
+            elif payload.emoji.name == '1\u20E3':
+    
+                if message.content == "You selected A Site.":
+                        await channel.send("https://i.imgur.com/pP1jRP7.jpg")
+                elif message.content == "You selected B Site.":
+                    await channel.send("https://i.imgur.com/NRfFSvI.jpg")
+            elif payload.emoji.name == '2\u20E3':
+                if message.content == "You selected A Site.":
+                        await channel.send("https://i.imgur.com/WKA7Y4J.jpg")
+                elif message.content == "You selected B Site.":
+                    await channel.send("https://i.imgur.com/dTHtbSp.jpg")
+                 
 
     
-    client.run(TOKEN)
+    bot.run(TOKEN)
 
     
