@@ -44,18 +44,7 @@ def run_discord_bot():
     async def on_ready():
         print(f'{bot.user} is now running')
     
-    #@bot.event
-    #async def on_message(message):
-      #  if message.author == bot.user:
-       #     return
-       # username = str(message.author)
-       # user_message=str(message.content)
-       # channel = str(message.channel)
-       # print(f'{username} said : "{user_message}" ({channel})')
-       # if user_message[0] == '?':
-       #    user_message = user_message[1:]
-       #    await send_message(message, user_message, is_private=True)
-        #else: await send_message(message,user_message, is_private=False)
+    
     @bot.command()
     async def lineups(ctx):
     # Send an image
@@ -70,8 +59,8 @@ def run_discord_bot():
         
 
 
-    @bot.listen()
-    async def on_raw_reaction_add(payload):
+    @bot.listen('on_raw_reaction_add')
+    async def raw_reac_add(payload):
         
     # Check if the reaction is added by someone other than the bot
         channel = await bot.fetch_channel(payload.channel_id)
@@ -79,26 +68,33 @@ def run_discord_bot():
         
         if payload.user_id != bot.user.id:
             if payload.emoji.name == '🅰️':
-                sent_message = await channel.send("https://i.imgur.com/fCQhciZ.png")
-                await channel.send("You selected A Site.")
-                await sent_message.add_reaction('1\u20E3')
-                await sent_message.add_reaction('2\u20E3')
+                await channel.send("https://i.imgur.com/fCQhciZ.png")
+                sent_message = await channel.send("You selected A Site.")
+                await sent_message.add_reaction('1️⃣')
+                await sent_message.add_reaction('2️⃣')
+            
+
             elif payload.emoji.name == '🅱️':
-                sent_message = await channel.send("https://i.imgur.com/WZsWmbF.png")
-                await channel.send("You selected B Site.")
-                await sent_message.add_reaction('1\u20E3')
+                await channel.send("https://i.imgur.com/WZsWmbF.png")
+                sent_message = await channel.send("You selected B Site.")
+                await sent_message.add_reaction('1️⃣')
+              
         
-            elif payload.emoji.name == '1\u20E3':
+            elif payload.emoji.name == '1️⃣':
     
                 if message.content == "You selected A Site.":
                         await channel.send("https://i.imgur.com/pP1jRP7.jpg")
                 elif message.content == "You selected B Site.":
                     await channel.send("https://i.imgur.com/NRfFSvI.jpg")
-            elif payload.emoji.name == '2\u20E3':
+
+            elif payload.emoji.name == '2️⃣':
+                
                 if message.content == "You selected A Site.":
                         await channel.send("https://i.imgur.com/WKA7Y4J.jpg")
                 elif message.content == "You selected B Site.":
                     await channel.send("https://i.imgur.com/dTHtbSp.jpg")
+    
+    
                  
 
     
